@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# Generated artifacts. Everything here is reproducible from the scripts, and
+# the model files are large and binary.
+data/*.csv
+models/*.joblib
+results/logs/*.csv
+results/logs/*.json
+
+# Figures are kept in version control: they are the deliverable, and having
+# them in a diff makes it obvious when a change moved a result.
+!results/figures/*.png
