@@ -1,0 +1,1 @@
+"""Serializable trained-model bundle."""

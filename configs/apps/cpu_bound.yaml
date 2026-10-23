@@ -1,0 +1,3 @@
+name: cpu_bound
+base_service_demand_s: 0.020
+resource_mix: {cpu: 0.75, memory: 0.10, disk: 0.05, network: 0.10}

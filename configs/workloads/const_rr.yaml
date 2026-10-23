@@ -1,0 +1,4 @@
+name: const_rr
+kind: constant_rate_varying_complexity
+rate: 40
+complexity_std: 0.20

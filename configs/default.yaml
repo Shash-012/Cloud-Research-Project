@@ -1,0 +1,22 @@
+seed: 11
+monitor_interval_s: 10
+duration_s: 3600
+pool:
+  min_vms: 1
+  max_vms: 14
+  boot_delay_s: 30
+decision:
+  k_min: -7
+  k_max: 7
+  qos_ms: 250
+  dynamicity_alpha: 0.001
+  accuracy_r2_threshold: 0.9
+  scale_in_fraction: 0.6
+model:
+  include_request_rate: true
+  hidden_activation: leaky_relu
+  leaky_relu_alpha: 0.1
+  dropout: 0.2
+  learning_rate: 0.01
+  final_patience: 100
+  final_max_epochs: 500

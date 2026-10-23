@@ -1,0 +1,3 @@
+name: db_io
+base_service_demand_s: 0.025
+resource_mix: {cpu: 0.20, memory: 0.15, disk: 0.50, network: 0.15}

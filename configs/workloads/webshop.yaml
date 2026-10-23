@@ -1,0 +1,4 @@
+name: webshop
+kind: smooth_diurnal
+base_rate: 40
+amplitude: 35

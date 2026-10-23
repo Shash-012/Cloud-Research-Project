@@ -1,0 +1,4 @@
+name: surge
+kind: step_changes
+base_rate: 30
+surge_rate: 180
