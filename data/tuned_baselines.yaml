@@ -1,0 +1,3 @@
+cpu_lower: 0.3
+cpu_upper: 0.8
+rt_threshold_ms: 224.26024976013827

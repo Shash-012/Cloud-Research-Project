@@ -1,3 +1,12 @@
+# JavaML-like: heavy CPU, large payloads, memory per request.
 name: ml_batch
-base_service_demand_s: 0.030
-resource_mix: {cpu: 0.35, memory: 0.30, disk: 0.15, network: 0.20}
+vcpu: 4
+slots: 1000
+io_cap: 2
+cpu_ms: 500
+io_ms: 40
+net_in_kb: 60
+net_out_kb: 5
+mem_mb_per_req: 40
+sigma: 0.5
+qos_ms: 1800

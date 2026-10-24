@@ -1,4 +1,4 @@
+# Constant request rate, hidden complexity varies randomly (paper Sec 7.2).
 name: const_rr
-kind: constant_rate_varying_complexity
-rate: 40
-complexity_std: 0.20
+shape: const_rr
+const_vms: 3         # rate = capacity of this many VMs at 70% utilisation (pool is then 2..10, so load swings from idle to overload)

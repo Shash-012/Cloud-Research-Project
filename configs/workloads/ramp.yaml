@@ -1,0 +1,5 @@
+# Gradual ramps up and down: used only for perturbation (training) runs.
+name: ramp
+shape: ramp
+peak_vms: 8
+period_s: 14400    # very slow ramps keep load almost equal between before/after windows

@@ -1,22 +1,52 @@
-seed: 11
-monitor_interval_s: 10
-duration_s: 3600
-pool:
-  min_vms: 1
-  max_vms: 14
-  boot_delay_s: 30
-decision:
-  k_min: -7
-  k_max: 7
-  qos_ms: 250
-  dynamicity_alpha: 0.001
-  accuracy_r2_threshold: 0.9
-  scale_in_fraction: 0.6
-model:
-  include_request_rate: true
-  hidden_activation: leaky_relu
-  leaky_relu_alpha: 0.1
+# Global constants. Every run stores a copy of the config it used.
+interval_s: 10          # monitoring interval (paper: 10 s)
+boot_delay_s: 30        # scale-out boot delay (paper: not stated; decision log)
+init_vms: 4
+min_vms: 1
+max_vms: 14
+k_min: -7
+k_max: 7
+metric_count: 128
+
+# selection (decision log)
+alpha: 0.001            # t-test significance (paper: 0.001 in Sec 4.1, 0.05 in Sec 5)
+r2_threshold: 0.9       # paper method sections (conclusion says 0.95)
+cohen_d_min: null       # optional effect-size filter, e.g. 0.2
+select_train_frac: 0.7  # blocked split for the R2 filter
+
+# perturbation data collection
+perturb_hold_intervals: 10    # 100 s per observation
+perturb_avg_intervals: 5      # settled intervals averaged for the before/after state
+perturb_mult_range: [0.5, 2.6] # pool = needed capacity x U(range): mostly stable, some overload
+perturb_obs: 720
+rt_clip_ms: 25000             # winsorise training labels (paper RT reaches ~25 s)
+
+# network (paper Sec 4.5 / 6.3)
+nn:
+  optimizer: adam
+  lr: 0.01
+  activation: leaky_relu
   dropout: 0.2
-  learning_rate: 0.01
-  final_patience: 100
-  final_max_epochs: 500
+  batch_size: 64
+  normalization: standard
+  loss: mse
+  max_epochs: 500
+  patience: 100
+hpo:
+  trials: 20
+  max_epochs: 100
+  patience: 50
+  folds: 3
+
+# policy defaults (tuned per app/workload by scripts/04_tune_baselines.py)
+reactive_upper_frac: 0.9      # Eq. 10 scale-out trigger
+reactive_lower_frac: 0.6      # Eq. 10 scale-in trigger (text value, see decision log)
+opt_target_frac: 0.6          # OPT RT target as a fraction of the SLO (tuned per app/workload)
+cooldown_s: 30                # threshold policies wait this long after acting
+
+# experiment protocol
+eval_seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+tuning_seed: 1000
+train_seed: 5000
+duration_s: 2400
+policies: [rt, cpu, opt_reactive, opt_proactive]

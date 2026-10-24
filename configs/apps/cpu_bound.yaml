@@ -1,3 +1,12 @@
+# JavaSpring-like: CPU is the bottleneck.
 name: cpu_bound
-base_service_demand_s: 0.020
-resource_mix: {cpu: 0.75, memory: 0.10, disk: 0.05, network: 0.10}
+vcpu: 2
+slots: 1000          # no worker-thread limit
+io_cap: 0
+cpu_ms: 250
+io_ms: 0
+net_in_kb: 2
+net_out_kb: 8
+mem_mb_per_req: 5
+sigma: 0.35          # log-normal spread of demand
+qos_ms: 1000

@@ -1,0 +1,4 @@
+# Repeated rising/falling waves (paper Fig 4).
+name: waves
+shape: waves
+peak_vms: 8

@@ -3,39 +3,14 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "autoscaling-research"
-version = "0.1.0"
-description = "Seed-reproducible reproduction of the base-paper autoscaling experiments."
-requires-python = ">=3.11,<3.13"
-dependencies = [
-    "numpy>=1.24,<3",
-    "pandas>=2.0,<3",
-    "scipy>=1.10,<2",
-    "scikit-learn>=1.3,<2",
-    "simpy>=4.0,<5",
-    "torch>=2.1,<3",
-    "PyYAML>=6.0,<7",
-    "matplotlib>=3.7,<4",
-    "seaborn>=0.13,<1",
-]
-
-[project.optional-dependencies]
-dev = [
-    "pytest>=7.4,<9",
-    "ruff>=0.6,<1",
-    "pre-commit>=3.7,<5",
-]
+name = "autoscale"
+version = "1.0.0"
+description = "Reproduction of Pintye et al. (2024) ML-based autoscaling (OPT) in a simulated cloud"
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.26,<3", "pandas>=2.2,<3", "scipy", "scikit-learn", "tabulate", "torch", "simpy", "matplotlib", "seaborn", "pyyaml", "pytest"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-ra"
-
-[tool.ruff]
-line-length = 100
-target-version = "py311"
-
-[tool.ruff.lint]
-select = ["E", "F", "I", "UP", "B"]

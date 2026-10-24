@@ -1,9 +1,14 @@
-"""Policy protocol."""
+"""Policy interface. decide(obs) returns the change to apply to the TOTAL pool (attached + booting)."""
+from __future__ import annotations
+from abc import ABC, abstractmethod
+from ..env.base import Observation
 
-from typing import Protocol
 
-from autoscale.env.base import Observation
+class Policy(ABC):
+    name = "policy"
 
+    def reset(self):
+        pass
 
-class Policy(Protocol):
-    def decide(self, observation: Observation) -> int: ...
+    @abstractmethod
+    def decide(self, obs: Observation) -> int: ...

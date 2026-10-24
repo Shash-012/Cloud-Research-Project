@@ -1,4 +1,4 @@
+# Sudden, unpredictable step changes.
 name: surge
-kind: step_changes
-base_rate: 30
-surge_rate: 180
+shape: surge
+peak_vms: 9

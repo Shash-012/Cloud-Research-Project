@@ -1,3 +1,12 @@
+# MongoDB-like: disk is the bottleneck, CPU utilisation under-reports load.
 name: db_io
-base_service_demand_s: 0.025
-resource_mix: {cpu: 0.20, memory: 0.15, disk: 0.50, network: 0.15}
+vcpu: 2
+slots: 8
+io_cap: 2
+cpu_ms: 100
+io_ms: 160
+net_in_kb: 1
+net_out_kb: 20
+mem_mb_per_req: 8
+sigma: 0.35
+qos_ms: 1000
