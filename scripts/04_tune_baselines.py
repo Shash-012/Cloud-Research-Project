@@ -5,9 +5,9 @@ import itertools
 import os
 from concurrent.futures import ProcessPoolExecutor
 
+import _common  # noqa: F401
 import yaml
 
-import _common  # noqa: F401, E402
 from autoscale.config import RESULTS, load_config
 from autoscale.runner.run_experiment import run_one
 
@@ -48,24 +48,39 @@ def run_job(job: tuple, config: dict, duration: float) -> tuple:
     return job, kpis["qos_viol_pct"] + 0.15 * kpis["vm_used_pct"]
 
 
+def _run_job_args(args: tuple) -> tuple:
+    """Process-pool adapter kept at module scope for Windows spawn."""
+    return run_job(*args)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--fast", action="store_true")
     parser.add_argument("--workloads", nargs="*", default=["webshop", "surge", "waves"])
     parser.add_argument("--apps", nargs="*")
     parser.add_argument("--duration", type=float, default=None)
+    parser.add_argument("--workers", type=int, default=None)
     args = parser.parse_args()
 
     config = load_config()
     duration = args.duration or config["duration_s"]
     jobs = build_jobs(config, args)
     print(len(jobs), "tuning runs")
-
-    if os.name == "nt":
-        results = [run_job(job, config, duration) for job in jobs]
+    workers = args.workers or min(4, max(1, (os.cpu_count() or 2) - 1))
+    if workers == 1:
+        results = []
+        for index, job in enumerate(jobs, 1):
+            results.append(run_job(job, config, duration))
+            print(f"\r  {index}/{len(jobs)}", end="", flush=True)
+        print()
     else:
-        with ProcessPoolExecutor(max(1, (os.cpu_count() or 2) - 1)) as executor:
-            results = list(executor.map(lambda job: run_job(job, config, duration), jobs))
+        job_args = [(job, config, duration) for job in jobs]
+        with ProcessPoolExecutor(max_workers=workers) as executor:
+            results = []
+            for index, result in enumerate(executor.map(_run_job_args, job_args), 1):
+                results.append(result)
+                print(f"\r  {index}/{len(jobs)}", end="", flush=True)
+        print()
 
     best = {}
     for (app, workload, policy, params), score in results:
