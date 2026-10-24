@@ -14,4 +14,6 @@ results/
 !results/tables/*.tex
 !results/tables/*.json
 !results/tables/*.yaml
+results/raw/
+results/models/
 .venv/
