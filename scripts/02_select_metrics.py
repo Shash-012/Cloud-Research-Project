@@ -25,10 +25,21 @@ for app in cfg["apps"]:
     chosen[app] = sorted(full[full.selected].metric)
     ns = sorted(sets)
     jac = [len(sets[a] & sets[b]) / max(1, len(sets[a] | sets[b])) for a in ns for b in ns if a < b]
-    rows.append(dict(app=app, n_selected=len(chosen[app]), n_dynamic=int(full.dynamic.sum()),
-                     n_predictable=int(full.predictable.sum()),
-                     false_pos_on_irrelevant=int(full[full.kind.isin(["const", "drift", "noise", "total", "slow"]) & full.selected].shape[0]),
-                     stability_min_jaccard=min(jac) if jac else np.nan))
+    rows.append(
+        {
+            "app": app,
+            "n_selected": len(chosen[app]),
+            "n_dynamic": int(full.dynamic.sum()),
+            "n_predictable": int(full.predictable.sum()),
+            "false_pos_on_irrelevant": int(
+                full[
+                    full.kind.isin(["const", "drift", "noise", "total", "slow"])
+                    & full.selected
+                ].shape[0]
+            ),
+            "stability_min_jaccard": min(jac) if jac else np.nan,
+        }
+    )
     top = full[full.selected].sort_values("p").head(6).metric.tolist()
     plots.plot_delta_boxplots(ds, top, out_f / f"E1_delta_boxplot_{app}.png", f"{app}: selected metrics")
     plots.plot_r2_bars(full, cfg["r2_threshold"], out_f / f"E2_r2_{app}.png", f"{app}: R2 of Eq. 1")
