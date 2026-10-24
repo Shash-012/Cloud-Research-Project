@@ -1,0 +1,99 @@
+cpu_bound/surge:
+  cpu:
+    lower: 15
+    upper: 65
+  opt_proactive:
+    target_frac: 0.4
+  opt_reactive:
+    target_frac: 0.4
+  rt:
+    lower_frac: 0.15
+    upper_frac: 0.5
+cpu_bound/waves:
+  cpu:
+    lower: 25
+    upper: 75
+  opt_proactive:
+    target_frac: 0.4
+  opt_reactive:
+    target_frac: 0.4
+  rt:
+    lower_frac: 0.15
+    upper_frac: 0.5
+cpu_bound/webshop:
+  cpu:
+    lower: 35
+    upper: 75
+  opt_proactive:
+    target_frac: 0.4
+  opt_reactive:
+    target_frac: 0.4
+  rt:
+    lower_frac: 0.15
+    upper_frac: 0.5
+db_io/surge:
+  cpu:
+    lower: 15
+    upper: 45
+  opt_proactive:
+    target_frac: 0.4
+  opt_reactive:
+    target_frac: 1.0
+  rt:
+    lower_frac: 0.25
+    upper_frac: 0.5
+db_io/waves:
+  cpu:
+    lower: 25
+    upper: 45
+  opt_proactive:
+    target_frac: 0.4
+  opt_reactive:
+    target_frac: 0.55
+  rt:
+    lower_frac: 0.15
+    upper_frac: 0.5
+db_io/webshop:
+  cpu:
+    lower: 25
+    upper: 45
+  opt_proactive:
+    target_frac: 0.55
+  opt_reactive:
+    target_frac: 0.55
+  rt:
+    lower_frac: 0.15
+    upper_frac: 0.5
+ml_batch/surge:
+  cpu:
+    lower: 15
+    upper: 55
+  opt_proactive:
+    target_frac: 0.4
+  opt_reactive:
+    target_frac: 0.55
+  rt:
+    lower_frac: 0.15
+    upper_frac: 0.5
+ml_batch/waves:
+  cpu:
+    lower: 35
+    upper: 85
+  opt_proactive:
+    target_frac: 0.4
+  opt_reactive:
+    target_frac: 0.85
+  rt:
+    lower_frac: 0.15
+    upper_frac: 0.5
+ml_batch/webshop:
+  cpu:
+    lower: 25
+    upper: 85
+  opt_proactive:
+    target_frac: 0.55
+  opt_reactive:
+    target_frac: 0.55
+  rt:
+    lower_frac: 0.15
+    upper_frac: 0.5

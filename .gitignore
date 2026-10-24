@@ -3,4 +3,15 @@ __pycache__/
 .pytest_cache/
 *.egg-info/
 results/
+!results/
+!results/figures/
+!results/figures/.gitkeep
+!results/figures/*.png
+!results/tables/
+!results/tables/.gitkeep
+!results/tables/*.csv
+!results/tables/*.md
+!results/tables/*.tex
+!results/tables/*.json
+!results/tables/*.yaml
 .venv/

@@ -1,0 +1,4 @@
+app,n_selected,n_dynamic,n_predictable,false_pos_on_irrelevant,stability_min_jaccard
+cpu_bound,22,51,40,0,0.8695652173913043
+db_io,27,60,45,0,1.0
+ml_batch,26,60,44,0,0.8214285714285714
