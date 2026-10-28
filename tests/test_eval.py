@@ -41,3 +41,20 @@ def test_summarise_and_paired_table():
                        "v": [0.1, 0.2, 0.3, 0.2, 0.3, 0.5]})
     t = paired_table(df, "p", ["v"])
     assert len(t) == 1 and t.median_diff_ref_minus_policy[0] == pytest.approx(-0.1)
+
+
+def test_hypervolume_hand_computed_two_points():
+    from autoscaler.eval.stats import hypervolume
+    # boxes [p, 1.1]^3: 1.0*0.6*0.6 + 0.6*1.0*0.6 - 0.6^3 (overlap from (0.5, 0.5, 0.5))
+    pts = [[0.1, 0.5, 0.5], [0.5, 0.1, 0.5]]
+    assert hypervolume(pts) == pytest.approx(0.36 + 0.36 - 0.216)
+    assert hypervolume([[0.0, 0.0, 0.0]]) == pytest.approx(1.1 ** 3)
+    # a dominated point adds nothing
+    assert hypervolume(pts + [[0.6, 0.6, 0.6]]) == pytest.approx(hypervolume(pts))
+    assert hypervolume([[1.2, 0.0, 0.0]]) == 0.0
+
+
+def test_minmax_normalise():
+    from autoscaler.eval.stats import minmax_normalise
+    ref = np.array([[0.0, 5.0], [10.0, 5.0]])
+    assert np.allclose(minmax_normalise(np.array([[5.0, 5.0]]), ref), [[0.5, 0.0]])

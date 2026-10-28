@@ -63,3 +63,29 @@ def paired_table(df: pd.DataFrame, reference: str, metrics, seed_col="seed") -> 
         for m, g in out.groupby("metric"):
             out.loc[g.index, "p_holm"] = holm(g.p.to_numpy())
     return out
+
+
+def minmax_normalise(points: np.ndarray, ref_set: np.ndarray) -> np.ndarray:
+    """Min-max normalise each column of `points` over the rows of `ref_set` (0 where a column is constant)."""
+    lo, hi = ref_set.min(axis=0), ref_set.max(axis=0)
+    span = np.where(hi > lo, hi - lo, 1.0)
+    return np.where(hi > lo, (points - lo) / span, 0.0)
+
+
+def hypervolume(points, ref=(1.1, 1.1, 1.1)) -> float:
+    """Exact hypervolume (all objectives minimised) of the union of boxes [p, ref], by inclusion-exclusion.
+
+    Fine for the at most seven points per policy used here (2^7 - 1 terms).
+    """
+    from itertools import combinations
+    P = np.atleast_2d(np.asarray(points, float))
+    ref = np.asarray(ref, float)
+    P = P[np.all(P < ref, axis=1)]                # points outside the reference box add nothing
+    if len(P) > 16:
+        raise ValueError("inclusion-exclusion hypervolume is meant for small point sets")
+    total = 0.0
+    for r in range(1, len(P) + 1):
+        for idx in combinations(range(len(P)), r):
+            corner = P[list(idx)].max(axis=0)
+            total += (-1) ** (r + 1) * float(np.prod(np.clip(ref - corner, 0, None)))
+    return total
