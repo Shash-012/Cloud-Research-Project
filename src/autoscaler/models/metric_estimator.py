@@ -9,7 +9,7 @@ from sklearn.compose import TransformedTargetRegressor
 from sklearn.ensemble import HistGradientBoostingRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
-from sklearn.model_selection import KFold
+from sklearn.model_selection import GroupKFold, KFold
 from sklearn.neural_network import MLPRegressor
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
@@ -62,12 +62,19 @@ def make_candidate(name: str, cfg: dict):
     raise ValueError(f"unknown stage-1 candidate {name}")
 
 
-def _fit_metric(df: pd.DataFrame, metric: str, candidates, cfg: dict):
-    """CV every candidate for one metric; return scores, chosen name, refit model, OOF preds."""
+def _fit_metric(df: pd.DataFrame, metric: str, candidates, cfg: dict, group_col: str | None = None):
+    """CV every candidate for one metric; return scores, chosen name, refit model, OOF preds.
+
+    With `group_col` (CloudSim Plus data, Step 3.15) the folds are GroupKFold over that column, so rows of one
+    run never sit on both sides of a fold.
+    """
     s = cfg["stage1"]
     m, w, k = transition_inputs(df, metric)
     y = df[f"{metric}_after"].to_numpy(float)
-    folds = list(KFold(s["cv_folds"], shuffle=True, random_state=s["cv_seed"]).split(y))
+    if group_col is None:
+        folds = list(KFold(s["cv_folds"], shuffle=True, random_state=s["cv_seed"]).split(y))
+    else:
+        folds = list(GroupKFold(s["cv_folds"]).split(y, groups=df[group_col].to_numpy()))
     scores, oofs = {}, {}
     for name in candidates:
         X = FEATURES[CANDIDATE_FEATURES[name]](m, w, k)
@@ -98,10 +105,10 @@ class MetricEstimator:
         self.oof_residuals: dict = {}  # metric -> out-of-fold residual vector (training rows)
         self.metrics: list[str] = []   # selected metrics (prediction output order)
 
-    def fit(self, df: pd.DataFrame, metrics, n_jobs: int = 1):
+    def fit(self, df: pd.DataFrame, metrics, n_jobs: int = 1, group_col: str | None = None):
         from joblib import Parallel, delayed
         results = Parallel(n_jobs=n_jobs)(
-            delayed(_fit_metric)(df, m, self.candidates, self.cfg) for m in metrics)
+            delayed(_fit_metric)(df, m, self.candidates, self.cfg, group_col) for m in metrics)
         for metric, scores, chosen, model, oof in results:
             self.scores[metric] = scores
             self.chosen[metric] = chosen

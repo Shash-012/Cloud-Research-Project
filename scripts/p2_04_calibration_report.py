@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from autoscaler.config import load_config
 from autoscaler.data.dataset import load_transitions
+from autoscaler.data.sources import add_source_args, resolve
 from autoscaler.data.splits import split_from_config
 from autoscaler.logging_utils import run_dir
 from autoscaler.models.metric_estimator import MetricEstimator
@@ -25,19 +25,20 @@ from autoscaler.uncertainty.propagation import MODES
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", default="configs/prototype.yaml")
-    ap.add_argument("--data", default="data/processed/synthetic_transitions.parquet")
-    ap.add_argument("--model-dir", default="models")
+    ap.add_argument("--data", default=None, help="transition table (default depends on --source)")
     ap.add_argument("--tables", default="results/tables")
     ap.add_argument("--figures", default="results/figures")
     ap.add_argument("--out", default="results/runs")
+    add_source_args(ap)
     args = ap.parse_args()
-    cfg = load_config(args.config)
-    rd = run_dir(args.out, "p2_04_calibration_report", cfg)
+    src = resolve(args)
+    cfg = src.cfg
+    rd = run_dir(args.out, f"p2_04_calibration_report{src.suffix}", cfg)
     md, tables, figs = Path(args.model_dir), Path(args.tables), Path(args.figures)
     tables.mkdir(parents=True, exist_ok=True)
     figs.mkdir(parents=True, exist_ok=True)
 
-    _, calib, test = split_from_config(load_transitions(args.data), cfg)
+    _, calib, test = split_from_config(load_transitions(src.data, src.name), cfg)
     stage1 = MetricEstimator.load(md / "stage1.joblib")
     stage1_lin = MetricEstimator.load(md / "stage1_paper_linear.joblib")
     ens = RTEnsemble.load(md / "rt_ensemble")
@@ -92,10 +93,14 @@ def main():
         rel[name] = {tau: coverage(rt["y"], rt["U"])}
 
     table = pd.DataFrame(rows)
-    table.to_csv(tables / "calibration.csv", index=False)
+    table.to_csv(tables / f"calibration{src.suffix}.csv", index=False)
     table.to_csv(rd / "calibration.csv", index=False)
+    rel_rows = [{"variant": v, "level": float(lv), "coverage": float(c)}
+                for v, vals in rel.items()
+                for lv, c in (vals.items() if isinstance(vals, dict) else zip(levels, vals))]
+    pd.DataFrame(rel_rows).to_csv(tables / f"calibration_reliability{src.suffix}.csv", index=False)
     cond_all = pd.concat(cond_tables)
-    cond_all.to_csv(tables / "calibration_conditional.csv", index=False)
+    cond_all.to_csv(tables / f"calibration_conditional{src.suffix}.csv", index=False)
     save_conformal(z_cal, md / "conformal.json")
     save_conformal(z_cal, rd / "conformal.json")
 
@@ -120,8 +125,8 @@ def main():
               title="Conditional coverage")
     ax[1].legend(fontsize=7)
     fig.tight_layout()
-    fig.savefig(figs / "calibration_reliability.png", dpi=200)
-    fig.savefig(figs / "calibration_reliability.pdf")
+    fig.savefig(figs / f"calibration_reliability{src.suffix}.png", dpi=200)
+    fig.savefig(figs / f"calibration_reliability{src.suffix}.pdf")
 
     pd.set_option("display.width", 250)
     print(table[["variant", "coverage", "coverage_slo_bin", "mean_margin_ms", "nll", "mean_sigma",

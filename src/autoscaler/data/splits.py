@@ -30,5 +30,9 @@ def group_split(df: pd.DataFrame, group_col: str, fracs, seed: int):
 
 
 def split_from_config(df: pd.DataFrame, cfg: dict):
+    """Random split for independent synthetic rows; grouped by run_id for CloudSim Plus data (Step 3.15)."""
     s = cfg["splits"]
-    return random_split(df, [s["train"], s["calib"], s["test"]], s["seed"])
+    fracs = [s["train"], s["calib"], s["test"]]
+    if cfg.get("source") == "cloudsim":
+        return group_split(df, "run_id", fracs, s["seed"])
+    return random_split(df, fracs, s["seed"])

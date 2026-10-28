@@ -7,8 +7,8 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import r2_score
 
-from autoscaler.config import load_config
 from autoscaler.data.dataset import load_transitions
+from autoscaler.data.sources import add_source_args, resolve
 from autoscaler.data.splits import split_from_config
 from autoscaler.logging_utils import run_dir
 from autoscaler.models.metric_filters import load_selected
@@ -32,20 +32,21 @@ def accuracy(ens: RTEnsemble, test: pd.DataFrame, slo_cap_ms: float = 500.0) -> 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", default="configs/prototype.yaml")
-    ap.add_argument("--data", default="data/processed/synthetic_transitions.parquet")
-    ap.add_argument("--model-dir", default="models")
+    ap.add_argument("--data", default=None, help="transition table (default depends on --source)")
     ap.add_argument("--tables", default="results/tables")
     ap.add_argument("--out", default="results/runs")
     ap.add_argument("--jobs", type=int, default=10)
     ap.add_argument("--skip-search", action="store_true", help="reuse models/rt_hparams.json")
     ap.add_argument("--include-rate", action="store_true", help="also train the abl_with_rate ensemble")
+    add_source_args(ap)
     args = ap.parse_args()
-    cfg = load_config(args.config)
-    rd = run_dir(args.out, "p2_03_train_rt", cfg)
+    src = resolve(args)
+    cfg = src.cfg
+    rd = run_dir(args.out, f"p2_03_train_rt{src.suffix}", cfg)
     model_dir, tables = Path(args.model_dir), Path(args.tables)
     tables.mkdir(parents=True, exist_ok=True)
 
-    train, _, test = split_from_config(load_transitions(args.data), cfg)
+    train, _, test = split_from_config(load_transitions(src.data, src.name), cfg)
     metrics = load_selected(model_dir / "selected_metrics.json")
     cols = stage2_columns(metrics, cfg["ensemble"]["include_request_rate"])
     print("stage-2 inputs:", cols)
@@ -75,7 +76,7 @@ def main():
         rows.append({"model": "ensemble_with_rate", "members": ens_r.members, **accuracy(ens_r, test)})
 
     table = pd.DataFrame(rows)
-    table.to_csv(tables / "stage2_accuracy.csv", index=False)
+    table.to_csv(tables / f"stage2_accuracy{src.suffix}.csv", index=False)
     table.to_csv(rd / "stage2_accuracy.csv", index=False)
     (rd / "train_info.json").write_text(json.dumps(ens.train_info, indent=2))
     print(table.to_string(index=False, float_format=lambda v: f"{v:.6f}"))
@@ -90,7 +91,7 @@ def main():
     qrows = [{"model": name, "tau": q["tau"], "share_y_le_q": float(np.mean(y <= mdl.predict_frame(test)))}
              for name, mdl in (("quantile_nn", qnet), ("quantile_hgb", qhgb))]
     qtable = pd.DataFrame(qrows)
-    qtable.to_csv(tables / "quantile_coverage.csv", index=False)
+    qtable.to_csv(tables / f"quantile_coverage{src.suffix}.csv", index=False)
     qtable.to_csv(rd / "quantile_coverage.csv", index=False)
     print(qtable.to_string(index=False, float_format=lambda v: f"{v:.4f}"))
 

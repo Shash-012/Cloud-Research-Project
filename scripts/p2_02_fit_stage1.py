@@ -1,39 +1,39 @@
-"""Metric filters and stage-1 estimators (Steps 2.4, 2.5)."""
+"""Metric filters and stage-1 estimators (Steps 2.4, 2.5; CloudSim Plus data with --source cloudsim, Step 3.15)."""
 import argparse
 import json
 from pathlib import Path
 
 import pandas as pd
 
-from autoscaler.config import load_config
 from autoscaler.data.dataset import load_transitions
 from autoscaler.data.splits import split_from_config
 from autoscaler.logging_utils import run_dir
 from autoscaler.models.metric_estimator import MetricEstimator
 from autoscaler.models.metric_filters import final_metric_set, r2_filter, save_selected, ttest_filter
-from autoscaler.schema import METRICS
+from autoscaler.data.sources import add_source_args, resolve
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", default="configs/prototype.yaml")
-    ap.add_argument("--data", default="data/processed/synthetic_transitions.parquet")
-    ap.add_argument("--model-dir", default="models")
+    ap.add_argument("--data", default=None, help="transition table (default depends on --source)")
     ap.add_argument("--tables", default="results/tables")
     ap.add_argument("--out", default="results/runs")
     ap.add_argument("--jobs", type=int, default=5)
+    add_source_args(ap)
     args = ap.parse_args()
-    cfg = load_config(args.config)
-    rd = run_dir(args.out, "p2_02_fit_stage1", cfg)
+    src = resolve(args)
+    cfg, METRICS = src.cfg, src.metrics
+    rd = run_dir(args.out, f"p2_02_fit_stage1{src.suffix}", cfg)
     model_dir, tables = Path(args.model_dir), Path(args.tables)
     tables.mkdir(parents=True, exist_ok=True)
 
-    train, _, _ = split_from_config(load_transitions(args.data), cfg)
+    train, _, _ = split_from_config(load_transitions(src.data, src.name), cfg)
     f = cfg["metric_filter"]
 
     tt = ttest_filter(train, METRICS, f["ttest_alpha"])
     # Fit every metric so the table is complete; the selection uses both filters.
-    est = MetricEstimator(cfg).fit(train, METRICS, n_jobs=args.jobs)
+    est = MetricEstimator(cfg).fit(train, METRICS, n_jobs=args.jobs, group_col=src.group_col)
     r2_keep = r2_filter(est.scores, f["r2_threshold"])
     selected = final_metric_set(tt, r2_keep, METRICS)
     if not selected:
@@ -42,7 +42,8 @@ def main():
     est.save(model_dir / "stage1.joblib")
 
     # base-paper estimator for OPT and abl_stage1_linear (same metric set)
-    lin = MetricEstimator(cfg, candidates=["paper_linear"]).fit(train, selected, n_jobs=args.jobs)
+    lin = MetricEstimator(cfg, candidates=["paper_linear"]).fit(train, selected, n_jobs=args.jobs,
+                                                                    group_col=src.group_col)
     lin.save(model_dir / "stage1_paper_linear.joblib")
 
     save_selected(selected, model_dir / "selected_metrics.json",
@@ -55,8 +56,8 @@ def main():
                "r2_keep": r2_keep[m], "selected": m in selected}
         rows.append(row)
     table = pd.DataFrame(rows)
-    table.to_csv(tables / "stage1_r2.csv", index=False)
-    table.to_csv(rd / "stage1_r2.csv", index=False)
+    table.to_csv(tables / f"stage1_r2{src.suffix}.csv", index=False)
+    table.to_csv(rd / f"stage1_r2{src.suffix}.csv", index=False)
     (rd / "summary.json").write_text(json.dumps({"selected": selected, "chosen": est.chosen}, indent=2))
     pd.set_option("display.width", 200)
     print(table.to_string(index=False))
