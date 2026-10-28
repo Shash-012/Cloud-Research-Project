@@ -2,6 +2,7 @@
 import json
 import shutil
 import subprocess
+import threading
 import time
 from pathlib import Path
 
@@ -17,8 +18,16 @@ WORKLOAD_DIR = ROOT / "data" / "raw" / "workloads"
 JAVA_POLICIES = ("hold", "random_target", "cpu_threshold", "rt_threshold")
 
 
+_BUILD_LOCK = threading.Lock()
+
+
 def ensure_jar() -> Path:
-    """Build the jar if it is missing or older than any Java source or the pom."""
+    """Build the jar if it is missing or older than any Java source or the pom (one build at a time)."""
+    with _BUILD_LOCK:
+        return _ensure_jar()
+
+
+def _ensure_jar() -> Path:
     sources = list((CLOUDSIM_DIR / "src" / "main").rglob("*.java")) + [CLOUDSIM_DIR / "pom.xml"]
     newest = max(p.stat().st_mtime for p in sources)
     if not JAR.exists() or JAR.stat().st_mtime < newest:
