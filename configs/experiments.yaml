@@ -11,3 +11,18 @@ ablations: [abl_stage1_linear, abl_single_member, abl_no_uncertainty,
             abl_epistemic_only, abl_no_propagation, abl_quantile_nn,
             abl_quantile_hgb, abl_min_cost, abl_two_objective, abl_with_rate]
 sweep: {workers: 12}
+# Phase 4 (Step 4.4)
+weights_sweep: [[1,1,1],[3,1,1],[1,3,1],[1,1,3],[1,3,3],[3,1,3],[3,3,1]]
+main_policies: [cpu_threshold, rt_threshold, opt]      # plus proposed with every weights_sweep vector
+ablation_workloads: [daily_ramp_burst, flash_crowd]
+sensitivity:
+  workload: daily_ramp_burst
+  policies: [proposed, opt]
+  settings:
+    - {model: linear, ratio: 4}
+    - {model: square, ratio: 4}
+    - {model: cubic,  ratio: 4}
+    - {model: square, ratio: 1}
+    - {model: square, ratio: 1.42}
+    - {model: square, ratio: 2}
+grid: {workers: 4, base_port: 5555, out: results/runs/grid}
