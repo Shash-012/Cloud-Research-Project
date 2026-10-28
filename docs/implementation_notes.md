@@ -114,28 +114,42 @@ The upper end allows for runs slowed by long queues (`opt` oscillating, under-pr
 **Retraining** (Step 3.15, grouped by run_id, `models/cloudsim/`).
 * Stage 1 selected cpu_util (MLP ensemble, CV R² 0.904), net_in_kbps (0.978) and throughput_rps (0.972).
 * mem_util (0.80) and queue_len (0.11) failed the R² filter.
-* Stage-2 ensemble R² on log RT: 0.914 (true inputs).
-* **End-to-end coverage of `full`: 0.9512** (z = 1.6449), inside [0.93, 0.97]. `epistemic` alone: 0.593. Conformal z_cal = 1.70 would give 0.954. Coverage in the SLO bin is 0.856.
+* Stage-2 training uses `ensemble.max_epochs: 2000` (see section 4.1). Ensemble R² on log RT: 0.908 (true inputs).
+* **End-to-end coverage of `full`: 0.9675** (z = 1.6449), inside [0.93, 0.97].
+* Coverage in the SLO-containing bin: 0.931. `epistemic` alone: 0.512. Conformal z_cal = 1.544 would give 0.965.
 
 **Counterfactual** (Step 3.16, 50 pairs x k = -3..3 = 350 runs, `results/tables/counterfactual_by_k.csv`).
 
 | k | -3 | -2 | -1 | 0 | +1 | +2 | +3 |
 |---|---|---|---|---|---|---|---|
-| coverage of U_k | 0.94 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 |
-| median abs error (ms) | 38.5 | 8.6 | 6.0 | 3.0 | 2.2 | 2.0 | 1.1 |
+| coverage of U_k | 0.96 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 |
+| median abs error (ms) | 48.1 | 7.7 | 5.2 | 3.3 | 3.7 | 2.3 | 1.8 |
 
-**Acceptance check 3 is not met.** The roadmap requires 0.90 to 0.98 for every k; k = -2..+3 over-cover.
-
-The cause comes from `counterfactual_diagnostics.csv` and Figure 7:
-* These actions leave the pool lightly loaded (median measured RT 40 to 57 ms, none above the SLO).
-* The residuals, in units of the predicted σ, have a spread of only 0.14 to 0.46, where 1.0 would be calibrated.
-* The bound is too wide at low utilisation because the ensemble's aleatoric σ stays near 0.22 there, against about 0.05 on synthetic data. It was trained on about 2,400 rows. The stage-1 error also enters through one global covariance.
-* The end-to-end table shows the same pattern (coverage 1.00 / 1.00 / 0.97 in the low-RT bins), but averaging over regimes brings it to 0.95.
-* The overload case (k = -3, 36% of outcomes above the SLO) is in band at 0.94.
-
-So the error is conservative rather than unsafe. Fixing it needs a design change (a heteroscedastic stage-1 error model, more low-load training data, or locally weighted conformal), which is outside the roadmap's Phase 3, so it is left for a decision. The other two items of acceptance check 3 pass:
+**Acceptance check 3 is not met.** The roadmap requires 0.90 to 0.98 for every k; k = -2..+3 over-cover. The other two items pass:
 * every simulator test passes;
 * a full 360-step `proposed` run through the bridge has 360 decisions, each with every valid candidate, and the k applied in Java matches the Python decision at every step.
+
+### 4.1 Attempted fix and why the check stays unmet
+
+**Diagnosis.**
+* For k >= -1 the outcome is nearly deterministic: median measured RT 40 to 48 ms, log spread about 0.03, none above the SLO. The model also overestimates it by about 5%.
+* On low-load test rows (RT < 60 ms) the actual log residual spread is 0.023, but the ensemble's aleatoric σ was 0.17 (v1 models).
+* Any bound of reasonable width therefore covers all 50 pairs. To score at most 0.98, at least 1 of the 50 must fall outside the bound, which needs millisecond precision around 40 ms.
+
+**What was tried.** Each candidate was evaluated on the calibration and test splits and on the existing 350 counterfactual runs. The simulations do not depend on the model, so no re-simulation was needed.
+
+| Change | End-to-end coverage | SLO-bin coverage | Counterfactual coverage, k = -3 / -2..+3 |
+|---|---|---|---|
+| v1 (max_epochs 300; all members stopped at the cap) | 0.951 | 0.856 | 0.94 / 1.00 |
+| **v2: max_epochs 2000, so early stopping governs (kept)** | 0.964 to 0.968 | 0.900 to 0.931 | 0.96 / 1.00 |
+| v2 with dropout 0 (aleatoric σ at low load 0.133, actual 0.037) | 0.951 | 0.856 | 0.80 / 0.98 to 1.00 |
+| v1 with group-conditional ("Mondrian") conformal z per predicted-RT bin, 3 to 6 bins | 0.945 to 0.955 | | 0.94 to 1.00 per k |
+
+None passes for every k. The banded conformal results swing with the number of bins, and choosing the bin count that passes on the counterfactual would tune the method on the test, so it was not adopted.
+
+**The band is statistically fragile.** With 50 pairs per k, a perfectly calibrated bound (true coverage 0.95) lands in 45 to 49 of 50 with probability 0.885 per k, so all 7 k pass with probability **0.43** (0.34 at 0.96, 0.40 at 0.94). In this simulator the low-load outcomes are also nearly deterministic, so the observed 1.00 reflects conservative bounds in a region where they cannot change a decision: U is about 75 ms against a 250 ms SLO.
+
+**Kept:** the v2 models (early stopping instead of the 300-epoch cap). They improve coverage in the decision-relevant SLO bin from 0.856 to 0.931 and k = -3 from 0.94 to 0.96. The v1 models are backed up in `results/runs/models_cloudsim_v1/` (ignored by git). Passing the per-k band would need more pairs per k (fewer chance failures) together with a regime-aware error model; that is left for a decision.
 
 ## 5. Deviations from ROADMAP.md
 1. `engine.min_time_between_events` is 0.0001 s, not 0.001 s: 1 ms failed the M/M/1 check by +6%. See 1.5.
@@ -151,4 +165,5 @@ So the error is conservative rather than unsafe. Fixing it needs a design change
 11. **Bridge messages** carry extra fields (`n_draining`, `rate`, `fallback`) and use `null` for missing values.
 12. **Metric set and Phase 2 changes:** CloudSim Plus metrics are `throughput_rps` instead of `disk_iops` (as Step 3.7 defines). The Phase 2 modules gained source-specific options, as listed in section 2.
 13. **ReportLab** (>= 4.0) was added to `requirements.txt` for the Step 5.4 report. Pandoc and LaTeX are not installed.
-14. **Smoke grid:** besides the specified main-part smoke (2 policies, 1 workload, 2 seeds, shortened runs) in both environments, a few cheap synthetic runs exercise the ablation and sensitivity code paths (1 ablation, the 12 sensitivity settings for seed 1).
+14. **CloudSim stage-2 training uses `max_epochs: 2000`** (an override in `cloudsim.yaml`; the synthetic models keep 300). At 300 every member stopped at the cap, so early stopping never acted; see 4.1.
+15. **Smoke grid:** besides the specified main-part smoke (2 policies, 1 workload, 2 seeds, shortened runs) in both environments, a few cheap synthetic runs exercise the ablation and sensitivity code paths (1 ablation, the 12 sensitivity settings for seed 1).

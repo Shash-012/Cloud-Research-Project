@@ -1,3 +1,3 @@
 model,tau,share_y_le_q
-quantile_nn,0.95,0.9824780976220275
+quantile_nn,0.95,0.9874843554443054
 quantile_hgb,0.95,0.9023779724655819

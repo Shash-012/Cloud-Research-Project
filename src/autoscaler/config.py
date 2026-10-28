@@ -47,6 +47,8 @@ def merge_cloudsim(proto: dict, cs: dict, exp: dict | None = None) -> dict:
                       rt_ms=cs["slo"]["rt_ms"] / s)
     for key in ("actions", "cost", "power", "splits"):
         cfg[key] = copy.deepcopy(cs[key])
+    if "ensemble" in cs:                        # CloudSim-specific stage-2 training overrides
+        cfg["ensemble"] = dict(cfg["ensemble"], **cs["ensemble"])
     cfg["cloudsim"] = copy.deepcopy(cs)
     if exp is not None:
         cfg["baselines"] = copy.deepcopy(exp["baselines"])

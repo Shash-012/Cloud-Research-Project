@@ -36,3 +36,7 @@ transitions: {after_offset: 2, rate_drift_flag: 0.15}   # Step 3.14
 splits: {train: 0.6, calib: 0.2, test: 0.2, seed: 11}
 counterfactual: {pairs: 50, ks: [-3, -2, -1, 0, 1, 2, 3], seed: 3100, min_step: 40,
                  holdout_seeds: [2001, 2002, 2003, 2004, 2005], workload: random_walk}
+# Stage-2 training overrides for the CloudSim Plus models (merged over prototype.yaml's ensemble section).
+# At max_epochs 300 every member stopped at the cap, before early stopping (patience 20) could act, and the
+# variance heads were under-trained (aleatoric sigma 0.17 where the residual spread is 0.02 at low load).
+ensemble: {max_epochs: 2000}
