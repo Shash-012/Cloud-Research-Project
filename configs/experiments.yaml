@@ -1,0 +1,13 @@
+eval_seeds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+calibration_seeds: [1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010]
+workloads: [daily_ramp_burst, step, flash_crowd, sawtooth]
+# PLACEHOLDERS: the roadmap asks for the base paper's threshold values (Pintye, Kovacs & Lovas 2024).
+# The paper was not available while building the prototype, so the roadmap's placeholder values are kept.
+baselines:
+  cpu_threshold: {upper: 80.0, lower: 30.0, cooldown_steps: 3}
+  rt_threshold:  {upper_frac_slo: 0.8, lower_frac_slo: 0.4, cooldown_steps: 3}
+policies: [cpu_threshold, rt_threshold, opt, proposed]
+ablations: [abl_stage1_linear, abl_single_member, abl_no_uncertainty,
+            abl_epistemic_only, abl_no_propagation, abl_quantile_nn,
+            abl_quantile_hgb, abl_min_cost, abl_two_objective, abl_with_rate]
+sweep: {workers: 12}
