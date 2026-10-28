@@ -17,7 +17,7 @@ requests:
   mean_service_s: 0.04        # 40 ms of CPU per request -> mu = 25 req/s per VM
   length_dist: exponential
   request_kb: 8               # for the network-in metric
-  capacity_scale: 1.0         # see "Run time" in Step 3.1; set from the measured run time (Step 3.13)
+  capacity_scale: 1.0         # Step 3.1 "Run time": a 360-step run took 7.7 min (< ~10 min), so no scaling (Step 3.13)
 balancer: least_outstanding   # or round_robin
 slo: {rt_ms: 250.0, delta: 0.05, z: 1.6448536269514722, use_conformal: false}   # rt_ms is unscaled; effective SLO = rt_ms / capacity_scale
 actions: {k_min: -7, k_max: 7}
