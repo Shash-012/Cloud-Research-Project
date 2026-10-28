@@ -10,7 +10,8 @@ import java.util.Map;
 
 /**
  * Entry point. Arguments: --config cfg.json --workload-csv w.csv --seed N --policy NAME --out DIR [--port P]
- * [--run-id ID] [--workload-name NAME] [--force-action STEP:K] [--steps N] [--initial-vms N] [--energy-crosscheck].
+ * [--run-id ID] [--workload-name NAME] [--force-action STEP:K] [--steps N] [--initial-vms N] [--energy-crosscheck]
+ * [--remote] (serve even a Java policy from Python, for twin checks).
  * Java policies: hold, random_target, cpu_threshold, rt_threshold. Any other name is served by the Python bridge.
  * Without arguments it prints the Phase 0 smoke-test line.
  */
@@ -41,7 +42,7 @@ public class Main {
             r.energyCrossCheck = a.containsKey("energy-crosscheck");
             int port = Integer.parseInt(a.getOrDefault("port", Integer.toString(cfg.bridgePort)));
             List<String> javaPolicies = List.of("hold", "random_target", "cpu_threshold", "rt_threshold");
-            if (!javaPolicies.contains(r.policyName)) {
+            if (!javaPolicies.contains(r.policyName) || a.containsKey("remote")) {
                 r.policyFactory = run -> new RemotePolicy(cfg, cfg.bridgeHost, port, run.runId, run.policyName, run.seed);
             }
             Map<String, Object> s = r.run();

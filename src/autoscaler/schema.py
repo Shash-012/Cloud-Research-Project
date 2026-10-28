@@ -16,6 +16,20 @@ RUN_LOG_COLUMNS = [
     "fallback", "rt_mean_ms", "rt_p95_ms", "slo_violated", "cost_usd", "energy_wh",
 ] + METRICS
 
+# CloudSim Plus telemetry (Step 3.7): no disk metric, plus completions per second.
+METRICS_CLOUDSIM = ["cpu_util", "mem_util", "net_in_kbps", "queue_len", "throughput_rps"]
+
+
+def metrics_for(source: str) -> list[str]:
+    return METRICS_CLOUDSIM if source == "cloudsim" else METRICS
+
+
+def transition_columns(source: str) -> list[str]:
+    ms = metrics_for(source)
+    return (["source", "run_id", "step", "n_before", "k", "n_after", "rate_before", "rate_after"]
+            + [f"{m}_before" for m in ms] + [f"{m}_after" for m in ms] + ["rt_after_ms"])
+
+
 DECISION_CANDIDATE_FIELDS = [
     "k", "n", "mean_log", "sigma", "U", "cost", "energy", "u_hat", "feasible", "on_front", "score",
 ]

@@ -72,6 +72,12 @@ def save_logs(run_log: pd.DataFrame, decisions: list, folder) -> None:
     folder = Path(folder)
     folder.mkdir(parents=True, exist_ok=True)
     run_log.to_parquet(folder / "run_log.parquet", index=False)
+    save_decisions(decisions, folder)
+
+
+def save_decisions(decisions: list, folder) -> None:
+    folder = Path(folder)
+    folder.mkdir(parents=True, exist_ok=True)
     # mtime=0 keeps the gzip bytes identical for identical content
     with open(folder / "decisions.jsonl.gz", "wb") as raw:
         with gzip.GzipFile(fileobj=raw, mode="wb", mtime=0) as f:
