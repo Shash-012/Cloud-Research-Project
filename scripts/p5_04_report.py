@@ -125,8 +125,17 @@ def main():
                    f"(nominal 0.95; conformal z gives {full.coverage_conformal:.3f}).")
     cf = read(M / "counterfactual_by_k.csv")
     if cf is not None:
+        out_of_band = cf[(cf.coverage_U < 0.90) | (cf.coverage_U > 0.98)]
         lim.append("Counterfactual coverage of U_k ranges from "
                    f"{cf.coverage_U.min():.2f} to {cf.coverage_U.max():.2f} across k.")
+        if len(out_of_band):
+            ks = ", ".join(f"{int(k):+d}" for k in out_of_band.k)
+            lim.append(f"<b>Known limitation:</b> for k = {ks} the coverage lies outside the 0.90-0.98 band of "
+                       "acceptance check 3 (over-coverage). These actions leave the pool lightly loaded, where outcomes "
+                       "are nearly deterministic and U_k is far below the SLO, so the bound is conservative and cannot "
+                       "change a feasibility decision. With 50 pairs per k even a perfectly calibrated bound passes all "
+                       "seven k with probability about 0.43. Accepted as a documented limitation "
+                       "(docs/implementation_notes.md, sections 4.1 and 4.2).")
     if main_res is not None and "churn" in main_res:
         hi = main_res.loc[main_res.churn.idxmax()]
         lim.append(f"Highest churn: {hi.policy} on {hi.workload} ({hi.env}), {hi.churn:.0f} actions per run.")

@@ -151,6 +151,19 @@ None passes for every k. The banded conformal results swing with the number of b
 
 **Kept:** the v2 models (early stopping instead of the 300-epoch cap). They improve coverage in the decision-relevant SLO bin from 0.856 to 0.931 and k = -3 from 0.94 to 0.96. The v1 models are backed up in `results/runs/models_cloudsim_v1/` (ignored by git). Passing the per-k band would need more pairs per k (fewer chance failures) together with a regime-aware error model; that is left for a decision.
 
+## 4.2 Known limitation (accepted 2026-10-29)
+The per-k counterfactual coverage band of acceptance check 3 (0.90 to 0.98 for every k) is **not met and is accepted as a documented limitation**, by decision of the project owner. The full grid proceeds with the current (v2) models.
+
+* **What:** U_k covers 50 of 50 counterfactual outcomes for k = -2..+3, while k = -3 (overload) is in band at 0.96.
+* **Why it is acceptable:**
+  * The over-coverage is conservative, not unsafe.
+  * It occurs only at low load, where outcomes are nearly deterministic (about 40 to 48 ms) and U (about 75 ms) is far below the 250 ms SLO, so it cannot change a feasibility decision.
+  * Coverage where decisions are made is within target: end-to-end 0.9675, SLO bin 0.931.
+  * The band is statistically fragile: a perfectly calibrated bound passes all 7 k with probability 0.43 at 50 pairs per k.
+* **Effect on results:** at most slightly cautious scale-in at low load (a little extra cost and energy). No effect on SLO-violation results is expected.
+* **How the final report presents it:** as a limitation with these numbers. The per-k results are written to the report from `counterfactual_by_k.csv`.
+* **Possible future work:** more pairs per k (150 to 200) and a load-dependent (heteroscedastic) stage-1 error model or regime-conditional conformal calibration chosen on calibration data only.
+
 ## 5. Deviations from ROADMAP.md
 1. `engine.min_time_between_events` is 0.0001 s, not 0.001 s: 1 ms failed the M/M/1 check by +6%. See 1.5.
 2. `engine.mips_scale` is 1000, and `AccurateDatacenter` overrides two `DatacenterSimple` methods: three 8.5.7 timing artefacts. See 1.2.
