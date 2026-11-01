@@ -2,7 +2,8 @@
 
 Writes main_results.csv, ablations.csv, sensitivity.csv, paired_tests.csv and hypervolume.csv:
 mean and 95% t interval per (env, workload, policy, metric); paired Wilcoxon tests of proposed (weights 1,1,1)
-against each baseline and each ablation per workload and metric, Holm-corrected within each table; hypervolume of
+against each baseline and each ablation per workload and metric, Holm-corrected within each table (primary, as specified) and, as a secondary family, within each (env, workload,
+metric); hypervolume of
 each policy's points in min-max normalised (violation rate, cost, energy) space, reference point (1.1, 1.1, 1.1).
 """
 import argparse
@@ -41,11 +42,22 @@ def paired(df: pd.DataFrame, reference: pd.DataFrame, others: pd.DataFrame, tabl
             common = ref.index.intersection(gp.index)
             for m in TESTED:
                 med, p = paired_wilcoxon(ref.loc[common, m], gp.loc[common, m]) if len(common) else (np.nan, np.nan)
+                mean_d, ci_d = mean_ci(ref.loc[common, m] - gp.loc[common, m]) if len(common) else (np.nan, np.nan)
                 rows.append({"table": table, "env": env, "workload": wl, "reference": REFERENCE, "policy": pol,
-                             "metric": m, "pairs": len(common), "median_diff_ref_minus_policy": med, "p": p})
+                             "metric": m, "pairs": len(common), "median_diff_ref_minus_policy": med,
+                             "mean_diff_ref_minus_policy": mean_d, "mean_diff_ci": ci_d, "p": p})
     out = pd.DataFrame(rows)
     if len(out):
         out["p_holm"] = holm(out.p.fillna(1.0).to_numpy())        # Holm across all comparisons of this table
+        out["p_holm_family"] = np.nan                             # secondary: Holm within (env, workload, metric)
+        for _, g in out.groupby(["env", "workload", "metric"]):
+            out.loc[g.index, "p_holm_family"] = holm(g.p.fillna(1.0).to_numpy())
+        # smallest p the exact two-sided signed-rank test can give with this many pairs, and the smallest
+        # Holm-adjusted value it allows in each family: a comparison can only be significant if this is < alpha
+        out["p_min_possible"] = np.minimum(1.0, 2.0 / 2.0 ** out.pairs)
+        out["p_holm_min_possible"] = np.minimum(1.0, out.p_min_possible * len(out))
+        out["p_holm_family_min_possible"] = np.minimum(1.0, out.p_min_possible * out.groupby(
+            ["env", "workload", "metric"]).metric.transform("size"))
     return out
 
 
@@ -67,10 +79,28 @@ def hypervolumes(main: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def counterfactual_band(by_k: Path, lo: float = 0.90, hi: float = 0.98) -> pd.DataFrame | None:
+    """Probability that a bound with true coverage c lands inside [lo, hi] for one k and for every k at once,
+    given the number of pairs per k in counterfactual_by_k.csv (acceptance check 3)."""
+    from scipy.stats import binom
+    if not by_k.exists():
+        return None
+    cf = pd.read_csv(by_k)
+    n, n_k = int(cf.pairs.min()), len(cf)
+    k_lo, k_hi = int(np.ceil(lo * n - 1e-9)), int(np.floor(hi * n + 1e-9))
+    rows = []
+    for c in (0.94, 0.95, 0.96):
+        one = float(binom.cdf(k_hi, n, c) - binom.cdf(k_lo - 1, n, c))
+        rows.append({"true_coverage": c, "pairs_per_k": n, "ks": n_k, "band_lo": lo, "band_hi": hi,
+                     "covered_lo": k_lo, "covered_hi": k_hi, "p_pass_one_k": one, "p_pass_all_k": one ** n_k})
+    return pd.DataFrame(rows)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--summaries", default="results/tables/run_summaries.csv")
     ap.add_argument("--tables", default="results/tables")
+    ap.add_argument("--model-tables", default="results/tables", help="where counterfactual_by_k.csv is")
     args = ap.parse_args()
     tables = Path(args.tables)
     tables.mkdir(parents=True, exist_ok=True)
@@ -99,6 +129,9 @@ def main():
     tests.to_csv(tables / "paired_tests.csv", index=False)
     hv = hypervolumes(main_df)
     hv.to_csv(tables / "hypervolume.csv", index=False)
+    band = counterfactual_band(Path(args.model_tables) / "counterfactual_by_k.csv")
+    if band is not None:
+        band.to_csv(tables / "counterfactual_band_probability.csv", index=False)
     pd.set_option("display.width", 220)
     print(f"{len(df)} ok runs; main {len(main_df)}, ablations {len(abl_df)}, sensitivity {len(sens_df)}")
     print(tests.head(12).to_string(index=False))

@@ -1,0 +1,13 @@
+env,model,ratio,decisions,share_multi_point
+cloudsim,cubic,4.0,3591,0.9986076301865775
+cloudsim,linear,4.0,3590,0.0
+cloudsim,square,1.0,3590,0.0
+cloudsim,square,1.42,3590,0.09498607242339834
+cloudsim,square,2.0,3590,0.8704735376044568
+cloudsim,square,4.0,3590,0.9988857938718663
+synthetic,cubic,4.0,14390,1.0
+synthetic,linear,4.0,14390,0.0
+synthetic,square,1.0,14390,0.0
+synthetic,square,1.42,14390,0.002501737317581654
+synthetic,square,2.0,14390,0.6521890201528839
+synthetic,square,4.0,14390,1.0

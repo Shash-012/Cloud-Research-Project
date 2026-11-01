@@ -1,0 +1,17 @@
+env,workload,policy,points,hypervolume
+synthetic,daily_ramp_burst,cpu_threshold,1,0.43809256346194214
+synthetic,daily_ramp_burst,opt,1,0.058412282749345505
+synthetic,daily_ramp_burst,proposed,7,0.9603580887137533
+synthetic,daily_ramp_burst,rt_threshold,1,0.10369838376090681
+synthetic,flash_crowd,cpu_threshold,1,0.7040987297951641
+synthetic,flash_crowd,opt,1,0.12100000000000014
+synthetic,flash_crowd,proposed,7,1.0492825169986513
+synthetic,flash_crowd,rt_threshold,1,0.7578563485352956
+synthetic,sawtooth,cpu_threshold,1,0.22649031108743783
+synthetic,sawtooth,opt,1,0.09762095392102192
+synthetic,sawtooth,proposed,7,0.9435049414810386
+synthetic,sawtooth,rt_threshold,1,0.09514501630431413
+synthetic,step,cpu_threshold,1,0.44802037098919656
+synthetic,step,opt,1,0.01100000000000002
+synthetic,step,proposed,7,0.7362449236878249
+synthetic,step,rt_threshold,1,0.2198596072345898

@@ -8,6 +8,8 @@ import numpy as np
 import pandas as pd
 
 MAIN_ORDER = ["cpu_threshold", "rt_threshold", "opt", "proposed_w111"]
+LABELS = {"violation_rate": "violation rate (share of intervals)", "cost_usd": "cost (USD / run)",
+          "energy_kwh": "energy (kWh / run)"}
 
 
 def save(fig, path) -> list[Path]:
@@ -26,8 +28,8 @@ def workloads(series: dict, path):
     for ax, (shape, rates) in zip(axes[:, 0], series.items()):
         ax.plot(rates, lw=0.8, color="#2f5d8a")
         ax.set_title(shape, fontsize=9, loc="left")
-        ax.set_ylabel("req/s")
-    axes[-1, 0].set_xlabel("step")
+        ax.set_ylabel("rate (req/s)")
+    axes[-1, 0].set_xlabel("step (1-min interval)")
     return save(fig, path)
 
 
@@ -42,12 +44,12 @@ def time_series(logs: dict, slo_ms: float, path, title: str):
         pool = log.n_running + log.n_booting + (log.n_draining if "n_draining" in log else 0)
         ax[1].step(log.step, pool, where="post", lw=0.9, label=pol)
         ax[2].plot(log.step, log.rt_mean_ms, lw=0.7, label=pol)
-    ax[1].set_ylabel("VMs")
+    ax[1].set_ylabel("pool (VMs)")
     ax[1].legend(fontsize=7, ncol=4)
     ax[2].axhline(slo_ms, color="#b33", ls="--", lw=1, label="SLO")
     ax[2].set_yscale("log")
     ax[2].set_ylabel("mean RT (ms)")
-    ax[2].set_xlabel("step")
+    ax[2].set_xlabel("step (1-min interval)")
     return save(fig, path)
 
 
@@ -64,7 +66,7 @@ def bars_ci(summary: pd.DataFrame, path, order=None, title=""):
             s = summary[summary.workload == wl].set_index("policy").reindex(order)
             ax.bar(x + (j - (len(wls) - 1) / 2) * width, s[m], width, yerr=s[f"{m}_ci"].fillna(0), capsize=2,
                    label=wl, error_kw={"lw": 0.6})
-        ax.set_ylabel(m)
+        ax.set_ylabel(LABELS[m])
     axes[0].legend(fontsize=7, ncol=len(wls))
     axes[0].set_title(title, fontsize=10, loc="left")
     axes[-1].set_xticks(x, order, rotation=35, ha="right", fontsize=8)
@@ -90,9 +92,9 @@ def tradeoff(summary: pd.DataFrame, path, title=""):
             if len(b):
                 ax.scatter(b.violation_rate, b.cost_usd, c=b.energy_kwh, vmin=vmin, vmax=vmax, marker=mk,
                            edgecolors="k", s=60, label=pol, zorder=3)
-        ax.set(xlabel="violation rate", ylabel="cost (USD / run)", title=f"{title} {wl}")
+        ax.set(xlabel=LABELS["violation_rate"], ylabel=LABELS["cost_usd"], title=f"{title} {wl}")
         ax.legend(fontsize=7)
-        fig.colorbar(sc, ax=ax, label="energy (kWh)")
+        fig.colorbar(sc, ax=ax, label=LABELS["energy_kwh"])
     return save(fig, path)
 
 
@@ -111,6 +113,7 @@ def ablation_deltas(abl: pd.DataFrame, path, title=""):
             ax.barh(y + (j - (len(wls) - 1) / 2) * h, s[f"{m}_delta_vs_proposed"], h, label=wl)
         ax.axvline(0, color="k", lw=0.8)
         ax.set_title(f"{m}: ablation - proposed", fontsize=9)
+        ax.set_xlabel("change in " + LABELS[m])
     axes[0].set_yticks(y, pols, fontsize=8)
     axes[0].legend(fontsize=7)
     fig.suptitle(title, fontsize=10, x=0.01, ha="left")
@@ -132,14 +135,16 @@ def calibration(rel: dict, cond: dict, path):
                 ax.plot(g.level, g.coverage, marker="o", label=v)
             else:
                 ax.scatter(g.level, g.coverage, marker="s", label=v)
-        ax.set(xlabel="nominal coverage", ylabel="observed (end to end)", title=f"{env}: reliability")
+        ax.set(xlabel="nominal coverage (fraction)", ylabel="observed coverage, end to end (fraction)",
+               title=f"{env}: reliability")
         ax.legend(fontsize=6)
         ax = axes[row, 1]
         for v, g in c.groupby("variant", sort=False):
             if v in ("full", "ale_epi", "epistemic", "quantile_nn", "quantile_hgb"):
                 ax.plot(g.bin, g.coverage, marker="o", label=v)
         ax.axhline(0.95, color="0.6", ls="--", lw=1)
-        ax.set(xlabel="predicted-RT bin (low to high)", ylabel="coverage at 0.95", title=f"{env}: conditional")
+        ax.set(xlabel="predicted-RT bin (index, equal-count bins, low to high RT)",
+               ylabel="coverage at nominal 0.95 (fraction)", title=f"{env}: conditional")
         ax.legend(fontsize=6)
     return save(fig, path)
 
@@ -150,7 +155,8 @@ def uncertainty_decomposition(tables: dict, path):
     for ax, (env, t) in zip(axes[0], tables.items()):
         for col, label in (("sigma_ale", "aleatoric"), ("sigma_epi", "epistemic"), ("sigma_stage1", "stage 1")):
             ax.plot(t.u_mid, t[col], marker="o", label=label)
-        ax.set(xlabel="predicted post-scaling utilisation", ylabel="mean sigma (log RT)", title=env)
+        ax.set(xlabel="predicted post-scaling CPU utilisation (fraction)",
+               ylabel="mean sigma of log RT (log ms, dimensionless)", title=env)
         ax.legend(fontsize=8)
     return save(fig, path)
 
@@ -169,8 +175,8 @@ def counterfactual(df: pd.DataFrame, path):
         ax.set_xscale("log")
         ax.set_yscale("log")
         ax.set_title(f"k={k:+d} cov={g.covered.mean():.2f}", fontsize=8)
-        ax.set_xlabel("measured (ms)", fontsize=8)
-    axes[0, 0].set_ylabel("predicted (ms)")
+        ax.set_xlabel("measured RT (ms)", fontsize=8)
+    axes[0, 0].set_ylabel("predicted RT (ms)")
     axes[0, 0].legend(fontsize=6)
     return save(fig, path)
 
@@ -182,6 +188,7 @@ def power_sensitivity(df: pd.DataFrame, path, threshold: float = 1 / 0.84 ** 2):
         g = g.sort_values("ratio")
         ax.plot(g.ratio, g.share_multi_point, marker="o" if model == "square" else "s", label=f"{env} {model}")
     ax.axvline(threshold, color="#b33", ls="--", lw=1, label=f"threshold 1/u_slo^2 = {threshold:.2f}")
-    ax.set(xlabel="(P_max - P_idle) / P_idle", ylabel="share of decisions with >1 front point")
+    ax.set(xlabel="(P_max - P_idle) / P_idle (dimensionless)",
+           ylabel="share of decisions with >1 front point (fraction)")
     ax.legend(fontsize=7)
     return save(fig, path)

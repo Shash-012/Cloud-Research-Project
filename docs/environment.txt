@@ -1,0 +1,29 @@
+# Environment for the Phase 4/5 grid and final report (recorded 2026-10-29 08:42)
+
+git commit: 26e450304ade7aa672f461baeb81bffa3ebd2dbf (tag cloudsim-complete)
+OS: Windows 11 Home 10.0.26300; CPU: 10 physical / 16 logical cores; RAM 15.7 GB
+Grid workers: 4 (CloudSim Plus and synthetic); capacity_scale s = 1.0
+
+## Python
+Python 3.11.9
+(packages: requirements.lock.txt, regenerated with pip freeze)
+
+## java -version
+openjdk version "21.0.8" 2025-07-15 LTS
+OpenJDK Runtime Environment Temurin-21.0.8+9 (build 21.0.8+9-LTS)
+OpenJDK 64-Bit Server VM Temurin-21.0.8+9 (build 21.0.8+9-LTS, mixed mode, sharing)
+
+## mvn -v
+Apache Maven 3.9.16 (2bdd9fddda4b155ebf8000e807eb73fd829a51d5)
+Maven home: C:\ProgramData\chocolatey\lib\maven\apache-maven-3.9.16
+Java version: 21.0.8, vendor: Eclipse Adoptium, runtime: C:\Program Files\Eclipse Adoptium\jdk-21.0.8.9-hotspot
+Default locale: en_IN, platform encoding: UTF-8
+OS name: "windows 11", version: "10.0", arch: "amd64", family: "windows"
+
+## CloudSim Plus
+org.cloudsimplus:cloudsimplus:8.5.7 (cloudsim/pom.xml)
+
+## Test results
+pytest: pytest exit 0
+121 passed, 4 warnings in 38.74s
+mvn -q -f cloudsim/pom.xml test: exit 0; ArrivalTimingTest 1, ScalingTest 3, ValidationTest 8 tests, 0 failures, 0 errors
