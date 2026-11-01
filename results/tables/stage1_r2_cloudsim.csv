@@ -1,0 +1,6 @@
+metric,paper_linear,basis_linear,hgb,mlp_ensemble,chosen,ttest_p,ttest_keep,r2_keep,selected
+cpu_util,0.9004,0.9011,0.8964,0.9043,mlp_ensemble,0.0,True,True,True
+mem_util,0.7651,0.7672,0.7706,0.7986,mlp_ensemble,0.0,True,False,False
+net_in_kbps,0.9777,0.9777,0.9753,0.9778,paper_linear,0.017770381533164712,True,True,True
+queue_len,0.0635,0.0869,0.1145,0.1146,mlp_ensemble,1.699530694414159e-28,True,False,False
+throughput_rps,0.9711,0.971,0.9698,0.9718,mlp_ensemble,6.511358945519495e-11,True,True,True

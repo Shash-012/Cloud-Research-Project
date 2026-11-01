@@ -1,0 +1,173 @@
+time:
+  interval_s: 60
+  steps_per_run: 1440
+  warmup_steps: 200
+  decision_every: 1
+system:
+  vm_min: 1
+  vm_max: 30
+  initial_vms: 4
+  service_rate_per_vm: 25.0
+  base_latency_ms: 40.0
+  boot_delay_steps: 1
+  complexity:
+    amplitude: 0.12
+    period_steps: 260
+    noise_std: 0.03
+    floor: 0.5
+  rt_noise_frac: 0.05
+  u_max: 0.995
+  rt_floor_ms: 20.0
+telemetry:
+  cpu_util:
+    noise_std: 1.5
+  mem_util:
+    offset: 30.0
+    slope: 45.0
+    noise_std: 2.0
+  net_in_kbps:
+    per_request: 8.0
+    noise_std: 20.0
+  disk_iops:
+    per_request: 12.0
+    noise_std: 3.0
+  queue_len:
+    noise_std: 0.15
+workloads:
+  clip:
+  - 30.0
+  - 460.0
+  noise_std: 8.0
+  daily_ramp_burst:
+    base: 120.0
+    sin_amp: 60.0
+    ramp_height: 150.0
+    ramp_start: 0.208
+    ramp_len: 0.347
+    burst_height: 180.0
+    burst_centre: 0.729
+    burst_width: 0.0278
+  step:
+    low: 120.0
+    high: 330.0
+    at: 0.417
+  flash_crowd:
+    base: 120.0
+    spikes: 3
+    height: 250.0
+    width_frac: 0.0104
+    x_min: 0.1
+    x_max: 0.9
+  sawtooth:
+    low: 100.0
+    high: 380.0
+    period_frac: 0.16666666666666666
+  random_walk:
+    start: 150.0
+    step_std: 6.0
+slo:
+  rt_ms: 250.0
+  delta: 0.05
+  z: 1.6448536269514722
+  use_conformal: false
+actions:
+  k_min: -7
+  k_max: 7
+cost:
+  price_per_vm_hour: 0.1
+power:
+  model: square
+  p_idle_w: 80.0
+  p_max_w: 400.0
+calibration:
+  rows: 20000
+  rate_min: 30.0
+  rate_max: 460.0
+  seed: 1001
+splits:
+  train: 0.6
+  calib: 0.2
+  test: 0.2
+  seed: 11
+metric_filter:
+  r2_threshold: 0.9
+  ttest_alpha: 0.05
+stage1:
+  candidates:
+  - paper_linear
+  - basis_linear
+  - hgb
+  - mlp_ensemble
+  cv_folds: 5
+  cv_seed: 21
+  tie_tol: 0.0001
+  hgb:
+    max_iter: 300
+    learning_rate: 0.05
+  mlp:
+    members: 5
+    hidden:
+    - 32
+    - 16
+    max_iter: 300
+    early_stopping: true
+    seed: 31
+ensemble:
+  members: 5
+  val_frac: 0.15
+  max_epochs: 300
+  patience: 20
+  search_trials: 20
+  include_request_rate: false
+  seed: 2000
+  tuning_seed: 2100
+tuning:
+  hidden:
+  - - 32
+    - 16
+  - - 64
+    - 32
+  - - 128
+    - 64
+  lr:
+  - 0.0001
+  - 0.003
+  dropout:
+  - 0.0
+  - 0.1
+  - 0.2
+  weight_decay:
+  - 1.0e-06
+  - 0.001
+  batch_size:
+  - 64
+  - 128
+  - 256
+  slope:
+  - 0.01
+  - 0.1
+quantile:
+  tau: 0.95
+  hgb:
+    max_iter: 300
+    learning_rate: 0.05
+  seed: 2200
+propagation:
+  draws: 32
+  resample: false
+calibration_report:
+  levels:
+  - 0.5
+  - 0.8
+  - 0.9
+  - 0.95
+  - 0.99
+  bins: 5
+  seed: 2300
+selection:
+  rule: aug_tchebycheff
+  weights:
+  - 1.0
+  - 1.0
+  - 1.0
+  rho: 0.01

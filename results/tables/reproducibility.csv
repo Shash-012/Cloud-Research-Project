@@ -1,0 +1,6 @@
+run_id,env,status,rerun_wall_clock_s,run_log_identical,steps,decisions_identical,decisions_same_except_float_rounding,decisions_max_rel_diff,java_run_log_csv_identical,sample_seed,max_wall_s
+cloudsim__abl_stage1_linear__flash_crowd__s7,cloudsim,ok,97.8,True,360,False,True,8.246591193738029e-08,True,4004,1800.0
+synthetic__proposed_w113__daily_ramp_burst__s2,synthetic,ok,25.2,True,1440,False,True,2.0444020528424732e-07,,4004,1800.0
+synthetic__proposed__daily_ramp_burst__s9__pw_square_r1.42,synthetic,ok,29.7,True,1440,False,True,2.1495484739014386e-07,,4004,1800.0
+cloudsim__abl_epistemic_only__flash_crowd__s4,cloudsim,ok,93.1,True,360,True,,,True,4004,1800.0
+synthetic__opt__flash_crowd__s10,synthetic,ok,3.0,True,1440,True,,,,4004,1800.0

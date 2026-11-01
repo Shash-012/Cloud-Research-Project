@@ -1,0 +1,7 @@
+env,part,planned,ok,not_ok,not_ok_listed_in_failed_runs_md,attempts_in_manifest
+synthetic,main,400,400,0,0,400
+synthetic,ablations,200,200,0,0,200
+synthetic,sensitivity,120,120,0,0,120
+cloudsim,main,400,400,0,0,408
+cloudsim,ablations,200,200,0,0,204
+cloudsim,sensitivity,120,120,0,0,124

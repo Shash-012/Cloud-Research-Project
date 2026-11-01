@@ -1,0 +1,97 @@
+question,env,workload,comparison,metric,mean_diff_proposed_minus_other,ci95,median_diff,p,p_holm,p_holm_family,verdict
+baselines,synthetic,daily_ramp_burst,cpu_threshold,violation_rate,-0.0010483870967741937,0.0007220867743470163,-0.0012096774193548388,0.03125,0.0703125,0.03125,"proposed better, significant (secondary family only)"
+baselines,synthetic,daily_ramp_burst,cpu_threshold,cost_usd,-0.04916666666666956,0.29407841712805693,-0.2624999999999993,0.921875,0.921875,0.921875,no detectable difference
+baselines,synthetic,daily_ramp_burst,cpu_threshold,energy_kwh,-1.4363669679822677,0.14033950183225868,-1.3595592490903101,0.001953125,0.0703125,0.005859375,"proposed better, significant (secondary family only)"
+baselines,synthetic,daily_ramp_burst,opt,violation_rate,-0.5016935483870968,0.0009973692498810474,-0.5012096774193548,0.001953125,0.0703125,0.005859375,"proposed better, significant (secondary family only)"
+baselines,synthetic,daily_ramp_burst,opt,cost_usd,10.1915,0.13604493886384522,10.178333333333333,0.001953125,0.0703125,0.005859375,"proposed worse, significant (secondary family only)"
+baselines,synthetic,daily_ramp_burst,opt,energy_kwh,-1.4871721177227628,0.2568955864026264,-1.430028919725416,0.001953125,0.0703125,0.005859375,"proposed better, significant (secondary family only)"
+baselines,synthetic,daily_ramp_burst,rt_threshold,violation_rate,-0.002661290322580645,0.0009824265436538815,-0.0028225806451612906,0.00390625,0.0703125,0.0078125,"proposed better, significant (secondary family only)"
+baselines,synthetic,daily_ramp_burst,rt_threshold,cost_usd,5.94333333333333,0.03734907059922931,5.923333333333332,0.001953125,0.0703125,0.005859375,"proposed worse, significant (secondary family only)"
+baselines,synthetic,daily_ramp_burst,rt_threshold,energy_kwh,-3.0289600008535347,0.030883535366720564,-3.0252677246849444,0.001953125,0.0703125,0.005859375,"proposed better, significant (secondary family only)"
+baselines,synthetic,flash_crowd,cpu_threshold,violation_rate,-0.040645161290322585,0.004552279275953806,-0.04112903225806452,0.001953125,0.0703125,0.005859375,"proposed better, significant (secondary family only)"
+baselines,synthetic,flash_crowd,cpu_threshold,cost_usd,-2.262333333333337,0.5221138085964757,-2.2325000000000035,0.001953125,0.0703125,0.005859375,"proposed better, significant (secondary family only)"
+baselines,synthetic,flash_crowd,cpu_threshold,energy_kwh,-1.505994331669531,0.07714726756821776,-1.4875536974148567,0.001953125,0.0703125,0.005859375,"proposed better, significant (secondary family only)"
+baselines,synthetic,flash_crowd,opt,violation_rate,-0.5011290322580646,0.0008685501866795023,-0.5012096774193548,0.001953125,0.0703125,0.005859375,"proposed better, significant (secondary family only)"
+baselines,synthetic,flash_crowd,opt,cost_usd,7.061166666666667,0.13609786845214134,7.100833333333334,0.001953125,0.0703125,0.005859375,"proposed worse, significant (secondary family only)"
+baselines,synthetic,flash_crowd,opt,energy_kwh,2.123317130937763,0.1696200765695451,2.175100436299971,0.001953125,0.0703125,0.005859375,"proposed worse, significant (secondary family only)"
+baselines,synthetic,flash_crowd,rt_threshold,violation_rate,-0.08701612903225805,0.008228338444278786,-0.08991935483870968,0.001953125,0.0703125,0.005859375,"proposed better, significant (secondary family only)"
+baselines,synthetic,flash_crowd,rt_threshold,cost_usd,5.803833333333332,0.10544465466127768,5.828333333333331,0.001953125,0.0703125,0.005859375,"proposed worse, significant (secondary family only)"
+baselines,synthetic,flash_crowd,rt_threshold,energy_kwh,-2.5355381128864125,0.09917474103781093,-2.552794120678172,0.001953125,0.0703125,0.005859375,"proposed better, significant (secondary family only)"
+baselines,synthetic,sawtooth,cpu_threshold,violation_rate,-0.001370967741935484,0.0007220867743470162,-0.0012096774193548388,0.0078125,0.0703125,0.0078125,"proposed better, significant (secondary family only)"
+baselines,synthetic,sawtooth,cpu_threshold,cost_usd,2.8585000000000034,0.09356438422777959,2.82083333333334,0.001953125,0.0703125,0.005859375,"proposed worse, significant (secondary family only)"
+baselines,synthetic,sawtooth,cpu_threshold,energy_kwh,-3.1431279617346206,0.06700327469301655,-3.1773039531980913,0.001953125,0.0703125,0.005859375,"proposed better, significant (secondary family only)"
+baselines,synthetic,sawtooth,opt,violation_rate,-0.4963709677419355,0.00040793041869393307,-0.4959677419354839,0.001953125,0.0703125,0.005859375,"proposed better, significant (secondary family only)"
+baselines,synthetic,sawtooth,opt,cost_usd,11.448833333333335,0.0763441580192833,11.469166666666666,0.001953125,0.0703125,0.005859375,"proposed worse, significant (secondary family only)"
+baselines,synthetic,sawtooth,opt,energy_kwh,-0.2710276419423451,0.151126758489408,-0.2617424463877356,0.00390625,0.0703125,0.005859375,"proposed better, significant (secondary family only)"
+baselines,synthetic,sawtooth,rt_threshold,violation_rate,-0.005483870967741935,0.0022720743737247593,-0.004435483870967742,0.001953125,0.0703125,0.005859375,"proposed better, significant (secondary family only)"
+baselines,synthetic,sawtooth,rt_threshold,cost_usd,5.007833333333335,0.10665103350692916,5.005000000000003,0.001953125,0.0703125,0.005859375,"proposed worse, significant (secondary family only)"
+baselines,synthetic,sawtooth,rt_threshold,energy_kwh,-3.867457999086362,0.06679216980666022,-3.8649200860012414,0.001953125,0.0703125,0.005859375,"proposed better, significant (secondary family only)"
+baselines,synthetic,step,cpu_threshold,violation_rate,-0.02403225806451613,0.0012101171815833169,-0.024193548387096774,0.001953125,0.0703125,0.005859375,"proposed better, significant (secondary family only)"
+baselines,synthetic,step,cpu_threshold,cost_usd,3.297833333333332,0.3599405926796098,3.480833333333333,0.001953125,0.0703125,0.005859375,"proposed worse, significant (secondary family only)"
+baselines,synthetic,step,cpu_threshold,energy_kwh,-1.2683058335482968,0.1529364052155463,-1.2512412543052847,0.001953125,0.0703125,0.005859375,"proposed better, significant (secondary family only)"
+baselines,synthetic,step,opt,violation_rate,-0.5019354838709676,0.0009101308664760602,-0.5024193548387096,0.001953125,0.0703125,0.005859375,"proposed better, significant (secondary family only)"
+baselines,synthetic,step,opt,cost_usd,10.3305,0.12463686119705648,10.29583333333333,0.001953125,0.0703125,0.005859375,"proposed worse, significant (secondary family only)"
+baselines,synthetic,step,opt,energy_kwh,-3.489616613233808,0.258688325756757,-3.4927651987503907,0.001953125,0.0703125,0.005859375,"proposed better, significant (secondary family only)"
+baselines,synthetic,step,rt_threshold,violation_rate,-0.03814516129032258,0.0038656653941234924,-0.03749999999999999,0.001953125,0.0703125,0.005859375,"proposed better, significant (secondary family only)"
+baselines,synthetic,step,rt_threshold,cost_usd,6.493833333333333,0.06279256528994838,6.4883333333333315,0.001953125,0.0703125,0.005859375,"proposed worse, significant (secondary family only)"
+baselines,synthetic,step,rt_threshold,energy_kwh,-2.864344773377637,0.08869676187209892,-2.8948506707971973,0.001953125,0.0703125,0.005859375,"proposed better, significant (secondary family only)"
+E2,synthetic,daily_ramp_burst,abl_epistemic_only,violation_rate,0.0,0.0,0.0,1.0,1.0,1.0,no detectable difference
+E2,synthetic,daily_ramp_burst,abl_epistemic_only,cost_usd,2.771166666666664,0.02442794837065328,2.770833333333334,0.001953125,0.1171875,0.01953125,"proposed worse, significant (secondary family only)"
+E2,synthetic,daily_ramp_burst,abl_epistemic_only,energy_kwh,-1.0514168974748856,0.008560042291453808,-1.0469646239729542,0.001953125,0.1171875,0.01953125,"proposed better, significant (secondary family only)"
+E3,synthetic,daily_ramp_burst,abl_min_cost,violation_rate,-0.021854838709677422,0.0027526488539422037,-0.02217741935483871,0.001953125,0.1171875,0.01953125,"proposed better, significant (secondary family only)"
+E3,synthetic,daily_ramp_burst,abl_min_cost,cost_usd,6.8186666666666635,0.029035097005928722,6.82,0.001953125,0.1171875,0.01953125,"proposed worse, significant (secondary family only)"
+E3,synthetic,daily_ramp_burst,abl_min_cost,energy_kwh,-3.790479207893044,0.016338187126201664,-3.7891969415576554,0.001953125,0.1171875,0.01953125,"proposed better, significant (secondary family only)"
+E2,synthetic,daily_ramp_burst,abl_no_propagation,violation_rate,0.0,0.0,0.0,1.0,1.0,1.0,no detectable difference
+E2,synthetic,daily_ramp_burst,abl_no_propagation,cost_usd,2.194666666666665,0.02576069770034895,2.1841666666666644,0.001953125,0.1171875,0.01953125,"proposed worse, significant (secondary family only)"
+E2,synthetic,daily_ramp_burst,abl_no_propagation,energy_kwh,-0.7856755821176137,0.009487494037276502,-0.7790221676563434,0.001953125,0.1171875,0.01953125,"proposed better, significant (secondary family only)"
+E2,synthetic,daily_ramp_burst,abl_no_uncertainty,violation_rate,0.0,0.0,0.0,1.0,1.0,1.0,no detectable difference
+E2,synthetic,daily_ramp_burst,abl_no_uncertainty,cost_usd,3.0491666666666664,0.026116605623789927,3.0458333333333343,0.001953125,0.1171875,0.01953125,"proposed worse, significant (secondary family only)"
+E2,synthetic,daily_ramp_burst,abl_no_uncertainty,energy_kwh,-1.185518338482268,0.008211002228852352,-1.1859132848088692,0.001953125,0.1171875,0.01953125,"proposed better, significant (secondary family only)"
+E2,synthetic,daily_ramp_burst,abl_quantile_hgb,violation_rate,0.0,0.0,0.0,1.0,1.0,1.0,no detectable difference
+E2,synthetic,daily_ramp_burst,abl_quantile_hgb,cost_usd,2.2958333333333316,0.030548429568061627,2.300833333333335,0.001953125,0.1171875,0.01953125,"proposed worse, significant (secondary family only)"
+E2,synthetic,daily_ramp_burst,abl_quantile_hgb,energy_kwh,-0.8204099524147054,0.011231686559760898,-0.8198122654300661,0.001953125,0.1171875,0.01953125,"proposed better, significant (secondary family only)"
+E2,synthetic,daily_ramp_burst,abl_quantile_nn,violation_rate,0.0,0.0,0.0,1.0,1.0,1.0,no detectable difference
+E2,synthetic,daily_ramp_burst,abl_quantile_nn,cost_usd,2.383999999999999,0.03220920942883651,2.3908333333333296,0.001953125,0.1171875,0.01953125,"proposed worse, significant (secondary family only)"
+E2,synthetic,daily_ramp_burst,abl_quantile_nn,energy_kwh,-0.8647487786329364,0.01208706381560871,-0.8641099460184236,0.001953125,0.1171875,0.01953125,"proposed better, significant (secondary family only)"
+E1,synthetic,daily_ramp_burst,abl_single_member,violation_rate,0.0,0.0,0.0,1.0,1.0,1.0,no detectable difference
+E1,synthetic,daily_ramp_burst,abl_single_member,cost_usd,-0.038333333333334704,0.034390080063124565,-0.04333333333334011,0.064453125,1.0,0.064453125,no detectable difference
+E1,synthetic,daily_ramp_burst,abl_single_member,energy_kwh,0.011234338453662928,0.011384731989532933,0.015638961047486077,0.064453125,1.0,0.064453125,no detectable difference
+E1,synthetic,daily_ramp_burst,abl_stage1_linear,violation_rate,-0.08008064516129033,0.005336461689264091,-0.08064516129032258,0.001953125,0.1171875,0.01953125,"proposed better, significant (secondary family only)"
+E1,synthetic,daily_ramp_burst,abl_stage1_linear,cost_usd,2.1561666666666657,0.08092958951739972,2.106666666666662,0.001953125,0.1171875,0.01953125,"proposed worse, significant (secondary family only)"
+E1,synthetic,daily_ramp_burst,abl_stage1_linear,energy_kwh,-2.0336736208524897,0.043424002704425216,-2.0270743252017525,0.001953125,0.1171875,0.01953125,"proposed better, significant (secondary family only)"
+E3,synthetic,daily_ramp_burst,abl_two_objective,violation_rate,0.0,0.0,0.0,1.0,1.0,1.0,no detectable difference
+E3,synthetic,daily_ramp_burst,abl_two_objective,cost_usd,2.186,0.028725558378432332,2.1924999999999955,0.001953125,0.1171875,0.01953125,"proposed worse, significant (secondary family only)"
+E3,synthetic,daily_ramp_burst,abl_two_objective,energy_kwh,-0.7825381049456226,0.010758655070081674,-0.785966087275284,0.001953125,0.1171875,0.01953125,"proposed better, significant (secondary family only)"
+E1,synthetic,daily_ramp_burst,abl_with_rate,violation_rate,0.0,0.0,0.0,1.0,1.0,1.0,no detectable difference
+E1,synthetic,daily_ramp_burst,abl_with_rate,cost_usd,-0.09133333333333553,0.026264654830789807,-0.08916666666667084,0.001953125,0.1171875,0.01953125,"proposed better, significant (secondary family only)"
+E1,synthetic,daily_ramp_burst,abl_with_rate,energy_kwh,0.027052047721852546,0.009147077423046539,0.02370771114323844,0.001953125,0.1171875,0.01953125,"proposed worse, significant (secondary family only)"
+E2,synthetic,flash_crowd,abl_epistemic_only,violation_rate,0.0,0.0,0.0,1.0,1.0,1.0,no detectable difference
+E2,synthetic,flash_crowd,abl_epistemic_only,cost_usd,2.037166666666667,0.052951118331213784,2.0358333333333345,0.001953125,0.1171875,0.01953125,"proposed worse, significant (secondary family only)"
+E2,synthetic,flash_crowd,abl_epistemic_only,energy_kwh,-0.3324358779963738,0.019184269244749138,-0.3344636874728941,0.001953125,0.1171875,0.01953125,"proposed better, significant (secondary family only)"
+E3,synthetic,flash_crowd,abl_min_cost,violation_rate,-0.04370967741935484,0.0038918832908356217,-0.042741935483870966,0.001953125,0.1171875,0.01953125,"proposed better, significant (secondary family only)"
+E3,synthetic,flash_crowd,abl_min_cost,cost_usd,5.792333333333332,0.03640337101004305,5.788333333333332,0.001953125,0.1171875,0.01953125,"proposed worse, significant (secondary family only)"
+E3,synthetic,flash_crowd,abl_min_cost,energy_kwh,-2.1249818102987,0.03405208837120855,-2.129668678366798,0.001953125,0.1171875,0.01953125,"proposed better, significant (secondary family only)"
+E2,synthetic,flash_crowd,abl_no_propagation,violation_rate,0.0,0.0,0.0,1.0,1.0,1.0,no detectable difference
+E2,synthetic,flash_crowd,abl_no_propagation,cost_usd,1.3801666666666665,0.05588939106163063,1.4033333333333342,0.001953125,0.1171875,0.01953125,"proposed worse, significant (secondary family only)"
+E2,synthetic,flash_crowd,abl_no_propagation,energy_kwh,-0.1981248076316547,0.013696811662312269,-0.2035278139642216,0.001953125,0.1171875,0.01953125,"proposed better, significant (secondary family only)"
+E2,synthetic,flash_crowd,abl_no_uncertainty,violation_rate,-8.064516129032258e-05,0.00018243202925791974,0.0,1.0,1.0,1.0,no detectable difference
+E2,synthetic,flash_crowd,abl_no_uncertainty,cost_usd,2.304666666666666,0.03638861646327018,2.3108333333333313,0.001953125,0.1171875,0.01953125,"proposed worse, significant (secondary family only)"
+E2,synthetic,flash_crowd,abl_no_uncertainty,energy_kwh,-0.3980729112418942,0.018292479471807226,-0.400674269068066,0.001953125,0.1171875,0.01953125,"proposed better, significant (secondary family only)"
+E2,synthetic,flash_crowd,abl_quantile_hgb,violation_rate,0.0,0.0,0.0,1.0,1.0,1.0,no detectable difference
+E2,synthetic,flash_crowd,abl_quantile_hgb,cost_usd,1.596833333333334,0.0640215937305836,1.6016666666666683,0.001953125,0.1171875,0.01953125,"proposed worse, significant (secondary family only)"
+E2,synthetic,flash_crowd,abl_quantile_hgb,energy_kwh,-0.22729473032715503,0.01639059837245029,-0.23045012967063627,0.001953125,0.1171875,0.01953125,"proposed better, significant (secondary family only)"
+E2,synthetic,flash_crowd,abl_quantile_nn,violation_rate,0.0,0.0,0.0,1.0,1.0,1.0,no detectable difference
+E2,synthetic,flash_crowd,abl_quantile_nn,cost_usd,1.6376666666666675,0.04998406190232761,1.6400000000000006,0.001953125,0.1171875,0.01953125,"proposed worse, significant (secondary family only)"
+E2,synthetic,flash_crowd,abl_quantile_nn,energy_kwh,-0.23037639428695939,0.01589758252763436,-0.23384420588225652,0.001953125,0.1171875,0.01953125,"proposed better, significant (secondary family only)"
+E1,synthetic,flash_crowd,abl_single_member,violation_rate,0.0,0.0,0.0,1.0,1.0,1.0,no detectable difference
+E1,synthetic,flash_crowd,abl_single_member,cost_usd,0.13083333333333336,0.03472486521959781,0.13833333333333364,0.001953125,0.1171875,0.01953125,"proposed worse, significant (secondary family only)"
+E1,synthetic,flash_crowd,abl_single_member,energy_kwh,-0.010323596682743385,0.007590343426833906,-0.013378686370209891,0.01953125,0.37109375,0.02734375,"proposed better, significant (secondary family only)"
+E1,synthetic,flash_crowd,abl_stage1_linear,violation_rate,-0.08548387096774193,0.008158608373878782,-0.08588709677419355,0.001953125,0.1171875,0.01953125,"proposed better, significant (secondary family only)"
+E1,synthetic,flash_crowd,abl_stage1_linear,cost_usd,1.6096666666666657,0.1041178008111202,1.6299999999999972,0.001953125,0.1171875,0.01953125,"proposed worse, significant (secondary family only)"
+E1,synthetic,flash_crowd,abl_stage1_linear,energy_kwh,-1.4802642536496058,0.05456864401122767,-1.5008042774504986,0.001953125,0.1171875,0.01953125,"proposed better, significant (secondary family only)"
+E3,synthetic,flash_crowd,abl_two_objective,violation_rate,-0.0010483870967741937,0.0008181239785936013,-0.0008064516129032258,0.03125,0.5625,0.25,no detectable difference
+E3,synthetic,flash_crowd,abl_two_objective,cost_usd,3.4249999999999985,0.04962189285145264,3.4299999999999997,0.001953125,0.1171875,0.01953125,"proposed worse, significant (secondary family only)"
+E3,synthetic,flash_crowd,abl_two_objective,energy_kwh,-0.6500639802910996,0.01984905682268007,-0.6413631064204388,0.001953125,0.1171875,0.01953125,"proposed better, significant (secondary family only)"
+E1,synthetic,flash_crowd,abl_with_rate,violation_rate,0.0,0.0,0.0,1.0,1.0,1.0,no detectable difference
+E1,synthetic,flash_crowd,abl_with_rate,cost_usd,-0.1450000000000003,0.042961873303590206,-0.1533333333333342,0.001953125,0.1171875,0.01953125,"proposed better, significant (secondary family only)"
+E1,synthetic,flash_crowd,abl_with_rate,energy_kwh,0.008550231689503108,0.005412166664204395,0.009153393759259387,0.013671875,0.2734375,0.02734375,"proposed worse, significant (secondary family only)"

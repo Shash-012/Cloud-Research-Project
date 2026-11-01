@@ -1,0 +1,6 @@
+metric,paper_linear,basis_linear,hgb,mlp_ensemble,chosen,ttest_p,ttest_keep,r2_keep,selected
+cpu_util,0.85,0.9192,0.9658,0.9682,mlp_ensemble,0.0,True,True,True
+mem_util,0.823,0.8849,0.9328,0.9369,mlp_ensemble,0.0,True,True,True
+net_in_kbps,0.9992,0.9992,0.9991,0.9991,paper_linear,0.2692837708997541,False,True,False
+disk_iops,1.0,1.0,0.9995,0.9999,paper_linear,0.0,True,True,True
+queue_len,0.5663,0.6892,0.8564,0.8556,hgb,0.0,True,False,False

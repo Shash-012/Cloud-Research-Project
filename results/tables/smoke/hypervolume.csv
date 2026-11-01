@@ -1,0 +1,6 @@
+env,workload,policy,points,hypervolume
+cloudsim,step,cpu_threshold,1,1.3310000000000004
+cloudsim,step,proposed,1,0.01100000000000002
+synthetic,daily_ramp_burst,proposed,1,1.3310000000000004
+synthetic,step,opt,1,0.01100000000000002
+synthetic,step,proposed,1,0.12100000000000014
